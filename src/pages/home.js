@@ -1,13 +1,16 @@
 import React from "react";
 
-import Header from "../components/header";
+import Layout from "../components/layout"
+import "./pages.css"
 
 function Home() {
     return (
         <div>
-            <h1>
-                <Header />
-            </h1>
+            <Layout>
+                <h1 className="postlist">
+                    Here's where posts will go.
+                </h1>
+            </Layout>
         </div>
     )
 }
