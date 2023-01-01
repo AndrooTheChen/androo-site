@@ -1,10 +1,12 @@
 import React from "react";
 
+import Header from "../components/header";
+
 function Home() {
     return (
         <div>
             <h1>
-                This is the Homie page.
+                <Header />
             </h1>
         </div>
     )

@@ -11,7 +11,6 @@ import {
 export default function App() {
   return (
     <div>
-      <h1> example</h1>
         <Router>
           <Routes>
               <Route exact path="/" element={<Home/>} />

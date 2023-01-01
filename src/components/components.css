@@ -1,0 +1,11 @@
+h1 {
+    font-family: "Railway";
+    font-weight: 500;
+    margin: 0;
+}
+
+.header {
+    background: navy;
+    color: lightblue;
+    padding: 10px 20px;
+}
