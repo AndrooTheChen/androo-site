@@ -1,6 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw'
+import { Link } from 'react-router-dom'
 
 import postlist from "../posts.json";
 
@@ -25,11 +26,11 @@ const PostList = () => {
                         // isn't best practice.
                         // https://reactjs.org/docs/lists-and-keys.html#keys
                         <div key={idx} className="post-card">
-                            <h2>{post.title}</h2>
+                            <h2><Link className="link" to={`post/${post.id}`}>{post.title}</Link></h2>
                             <small>Published on {post.date} by {post.author}</small>
                             <hr />
                             <ReactMarkdown rehypePlugins={[rehypeRaw]} children={excerptList[idx]} />
-                            <small>Continue reading...</small>
+                            <small><Link className="link" to={`post/${post.id}`}>Continue reading...</Link></small>
                         </div>
                     )
                 })

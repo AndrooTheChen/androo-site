@@ -4,6 +4,11 @@
     text-align: center;
 }
 
+.post {
+    width: 40%;
+    margin: auto;
+}
+
 .page-content {
     width: 80%;
     margin: auto;
