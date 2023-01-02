@@ -1,6 +1,7 @@
 import React from "react";
 
 import Layout from "../components/layout"
+import PostList from "../components/postlist"
 import "./pages.css"
 
 function Home() {
@@ -8,7 +9,7 @@ function Home() {
         <div>
             <Layout>
                 <h1 className="postlist">
-                    Here's where posts will go.
+                    <PostList />
                 </h1>
             </Layout>
         </div>

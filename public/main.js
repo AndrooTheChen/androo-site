@@ -48,7 +48,7 @@ const getPosts = () => {
                     if (metadataIndices.length > 0) {
                         // Grab the contents as all the lines *after* our metadata headers.
                         lines = lines.slice(metadataIndices[1] + 1, lines.length)
-                        return lines
+                        return lines.join("\n")
                     }
                 }
                 
