@@ -6,7 +6,7 @@ import Post from './pages/post';
 import NotFound from "./pages/notfound";
 
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
