@@ -7,6 +7,9 @@ const { time } = require("console")
 const dirPath = path.join(__dirname, "../src/content")
 let postList = []
 
+const dirPathPages = path.join(__dirname, "../src/pages/content")
+let pageList = []
+
 const getPosts = () => {
     fs.readdir(dirPath, (err, files) => {
         if (err) {
@@ -63,7 +66,6 @@ const getPosts = () => {
                 const dateString = date.toString()
                 const parsedDate = Date.parse(dateString)
                 const timestamp = parsedDate / 1000
-                console.log(timestamp)
 
                 post = {
                     id: timestamp,
@@ -95,4 +97,32 @@ const getPosts = () => {
     return postList
 }
 
+const getPages = () => {
+    fs.readdir(dirPathPages, (err, files) => {
+        if (err) {
+            return console.log(`Failed to list contents of directory: ${err}`)
+        }
+
+        // console.log(files)  // print a list of all files in this dir.
+        files.forEach((file, idx) => {
+            let obj = {}
+            let post 
+            fs.readFile(`${dirPathPages}/${file}`, "utf8", (err, contents) => {
+                page = {
+                    content: contents
+                }
+
+                // Add all page contents to a single lists.
+                pageList.push(page)
+
+                // Stringify them and write to a file.
+                let data = JSON.stringify(pageList)
+                fs.writeFileSync("src/pages.json", data)
+            })
+        })
+    })
+    return postList
+}
+
 getPosts()
+getPages()
