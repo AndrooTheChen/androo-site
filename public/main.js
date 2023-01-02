@@ -1,5 +1,6 @@
 const path = require("path")
 const fs = require("fs")
+const { time } = require("console")
 
 // dirPath will help us navigate to our content/ dir where our
 // markdown files (posts) are stored.
@@ -55,8 +56,17 @@ const getPosts = () => {
                 // Initialize our Post fields.
                 const metadata = parseMetadata({lines, metadataIndices})
                 const content = parseContent({lines, metadataIndices})
+                
+                // Use the creation time as the ID to be unique and also to let us
+                // sort posts by creation date.
+                const date = new Date(metadata.date)
+                const dateString = date.toString()
+                const parsedDate = Date.parse(dateString)
+                const timestamp = parsedDate / 1000
+                console.log(timestamp)
+
                 post = {
-                    id: idx + 1,
+                    id: timestamp,
                     title: metadata.title ? metadata.title : "Untitled",
                     author: metadata.author ? metadata.author : "Anonymous",
                     date: metadata.date ? metadata.date : "No date specified",
@@ -68,7 +78,11 @@ const getPosts = () => {
 
                 // After we traverse thru all posts, stringify them and write to a file.
                 if (idx === files.length - 1) {
-                    let data = JSON.stringify(postList)
+                    // Sort posts by the ID.
+                    const sortedList = postList.sort((a, b) => {
+                        return a.id < b.id ? 1 : -1
+                    })
+                    let data = JSON.stringify(sortedList)
                     fs.writeFileSync("src/posts.json", data)
                 }
             })

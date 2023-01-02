@@ -1,7 +1,7 @@
 ---
 title: dis be my first post
 author: androo
-date: December 30th, 2022
+date: December 30, 2022
 ---
 
 ## Content
