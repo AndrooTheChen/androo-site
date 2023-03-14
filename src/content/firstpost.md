@@ -5,7 +5,7 @@ date: December 30, 2022
 ---
 
 ## Content
-one day this will be filled with useless garbage. right now it's empty but not for long.
+one day this will be filled with useless garbage. right now it's empty but not for long. WHAT THE FUCK
 
 gonna test throwing a video in here too.
 

@@ -1,5 +1,5 @@
 ---
-title: Making ~~this garbage~~my first website
+title: Making my first garbage website
 author: androo
 date: January 2, 2023
 ---
