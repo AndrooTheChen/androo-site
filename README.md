@@ -65,6 +65,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
+Use Node.js v18, v22 has some issues I'm too lazy to debug. Switch using `nvm use 18` or `nvm install 18` if it isn't installed yet.
+From branch `main` run `export NODE_OPTIONS=--openssl-legacy-provider && npm run deploy`
+
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
