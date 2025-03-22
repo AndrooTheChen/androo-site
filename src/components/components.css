@@ -12,19 +12,25 @@ h1 {
 .layout {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     min-height: 100vh;
+}
+
+.layout-content {
+    flex: 1;
 }
 
 .header {
     background: navy;
     color: lightblue;
     padding: 10px 20px;
+    margin: 0;
 }
 
 .navbar {
     display: flex;
     justify-content: space-around;
+    margin: 0;
+    padding: 10px 0;
 }
 
 .footer {
