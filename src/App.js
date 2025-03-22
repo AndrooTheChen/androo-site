@@ -4,6 +4,8 @@ import Home from './pages/home';
 import About from './pages/about';
 import Post from './pages/post';
 import NotFound from "./pages/notfound";
+import React from 'react';
+
 
 import {
   HashRouter as Router,
