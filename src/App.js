@@ -3,6 +3,7 @@ import './App.css';
 import Home from './pages/home';
 import About from './pages/about';
 import Post from './pages/post';
+import PrayerPartners from './pages/prayerPartners';
 import NotFound from "./pages/notfound";
 import React from 'react';
 
@@ -21,6 +22,7 @@ export default function App() {
               <Route exact path="/" element={<Home/>} />
               <Route path="/about" element={<About/>} />
               <Route path="/post/:id" element={<Post/>} />
+              <Route path="/prayer-partners" element={<PrayerPartners/>} />
               <Route path="/*" element={<NotFound/>} />
           </Routes>
         </Router>
