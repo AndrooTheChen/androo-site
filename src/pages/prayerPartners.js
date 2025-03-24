@@ -5,8 +5,8 @@ import Layout from "../components/layout"
 import "./pages.css"
 
 // Import JSON data directly
-import peopleList from "../data/people.json"
-import fixedPairsList from "../data/fixedPairs.json"
+import peopleList from "../data/dudes.json"
+import fixedPairsList from "../data/initialPairs.json"
 
 
 // Helper function to calculate time until next rotation
