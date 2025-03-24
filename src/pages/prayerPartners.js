@@ -6,12 +6,11 @@ import "./pages.css"
 
 // Import JSON data directly
 import peopleList from "../data/dudes.json"
-import fixedPairsList from "../data/initialPairs.json"
+import initialPairsList from "../data/initialPairs.json"
 
 
 // Helper function to calculate time until next rotation
 const getTimeUntilNextRotation = () => {
-    // ... existing code ...
     const now = new Date();
     const nextWednesday = new Date(now);
     
@@ -64,90 +63,149 @@ const RotationCountdown = () => {
   }
 
 // Generate pairs with rotation by one person each week
-const generatePairs = (people, fixedPairs = []) => {
-  // Get current week number since epoch to determine rotation
-  const now = new Date();
-  const startDate = new Date(1970, 0, 1);
-  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-  const weekNumber = Math.floor((now - startDate) / msPerWeek);
-  
-  // Create a copy of the people array to work with
-  let availablePeople = [...people];
-  
-  // Start with fixed pairs
-  let pairs = [...fixedPairs];
-  
-  // Remove people who are in fixed pairs
-  fixedPairs.forEach(pair => {
-    availablePeople = availablePeople.filter(person => 
-      !pair.includes(person)
-    );
-  });
-  
-  // If we have fewer than 2 people available, we need to break up a fixed pair
-  // to avoid having a single person alone
-  if (availablePeople.length === 1 && fixedPairs.length > 0) {
-    // Take a person from the last fixed pair to pair with our single person
-    const lastFixedPair = pairs.pop();
-    const personFromFixed = lastFixedPair[0];
-    const remainingFixed = lastFixedPair.slice(1);
-    
-    // Create a new pair with our single person and one from the fixed pair
-    pairs.push([availablePeople[0], personFromFixed]);
-    
-    // If there are still people left in the fixed pair, add them back
-    if (remainingFixed.length > 0) {
-      pairs.push(remainingFixed);
+const generatePairs = (people, initialPairs = []) => {
+    // Get current week number since epoch to determine rotation
+    const now = new Date();
+    // Note (androo): for testing
+    // const now = new Date(2025, 2, 27);
+    // const now = new Date(2025, 3, 3);
+
+    // Note (androo): we started doing this 3/19/2025)
+    const startDate = new Date(2025, 2, 19);
+    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+    const weekNumber = Math.floor((now - startDate) / msPerWeek);
+
+    // Create a copy of the people array to work with
+    let availablePeople = [...people];
+
+    // Start with fixed pairs
+    let pairs = [];
+    if (weekNumber === 0) {
+        pairs = [...initialPairs];
+        // Remove people who are in fixed pairs
+        initialPairs.forEach(pair => {
+            availablePeople = availablePeople.filter(person => 
+                !pair.includes(person)
+            );
+        });
     }
+
+    // If we have fewer than 2 people available, we need to break up a fixed pair
+    // to avoid having a single person alone
+    if (availablePeople.length === 1 && initialPairs.length > 0) {
+        // Take a person from the last fixed pair to pair with our single person
+        const lastFixedPair = pairs.pop();
+        const personFromFixed = lastFixedPair[0];
+        const remainingFixed = lastFixedPair.slice(1);
+
+        // Create a new pair with our single person and one from the fixed pair
+        pairs.push([availablePeople[0], personFromFixed]);
+
+        // If there are still people left in the fixed pair, add them back
+        if (remainingFixed.length > 0) {
+            pairs.push(remainingFixed);
+        }
+
+        return pairs;
+    }
+
+    // If no one is available, just return fixed pairs
+    if (availablePeople.length === 0) {
+        return pairs;
+    }
+
+    // Implement rotation by shifting the array based on week number
+    const rotationOffset = weekNumber % availablePeople.length;
+
+    // Create a rotated array
+    const rotatedPeople = [
+        ...availablePeople.slice(rotationOffset),
+        ...availablePeople.slice(0, rotationOffset)
+    ];
+
+    // Check if we have an odd number of people
+    const hasOddPerson = rotatedPeople.length % 2 === 1;
     
-    return pairs;
-  }
-  
-  // If no one is available, just return fixed pairs
-  if (availablePeople.length === 0) {
-    return pairs;
-  }
-  
-  // Implement rotation by shifting the array based on week number
-  const rotationOffset = weekNumber % availablePeople.length;
-  
-  // Create a rotated array
-  const rotatedPeople = [
-    ...availablePeople.slice(rotationOffset),
-    ...availablePeople.slice(0, rotationOffset)
-  ];
-  
-  // Create pairs, ensuring no one is left alone
-  for (let i = 0; i < rotatedPeople.length; i += 2) {
-    if (i + 1 < rotatedPeople.length) {
-      // Normal case: create a pair
-      pairs.push([rotatedPeople[i], rotatedPeople[i + 1]]);
+    // If we have an odd number, identify who will be the odd person out
+    let oddPersonOut = null;
+    if (hasOddPerson) {
+        oddPersonOut = rotatedPeople[rotatedPeople.length - 1];
+        
+        // Find who this person was paired with last week (if not week 0)
+        let lastWeekPartners = [];
+        if (weekNumber > 0) {
+            // Calculate last week's rotation
+            const lastWeekOffset = (weekNumber - 1) % availablePeople.length;
+            const lastWeekRotated = [
+                ...availablePeople.slice(lastWeekOffset),
+                ...availablePeople.slice(0, lastWeekOffset)
+            ];
+            
+            // Find the odd person's position in last week's rotation
+            const lastWeekPosition = lastWeekRotated.indexOf(oddPersonOut);
+            
+            // If they were in a pair
+            if (lastWeekPosition % 2 === 0 && lastWeekPosition + 1 < lastWeekRotated.length) {
+                lastWeekPartners.push(lastWeekRotated[lastWeekPosition + 1]);
+            } else if (lastWeekPosition % 2 === 1) {
+                lastWeekPartners.push(lastWeekRotated[lastWeekPosition - 1]);
+            }
+            
+            // If they were in a group of 3 last week
+            if (lastWeekRotated.length % 2 === 1 && 
+                lastWeekPosition === lastWeekRotated.length - 1) {
+                // They were the odd person out last week too
+                // They were added to the last pair
+                lastWeekPartners.push(lastWeekRotated[lastWeekRotated.length - 2]);
+                lastWeekPartners.push(lastWeekRotated[lastWeekRotated.length - 3]);
+            }
+        }
+        
+        // Create pairs, avoiding putting the odd person with their previous partners
+        const normalPairs = [];
+        for (let i = 0; i < rotatedPeople.length - 1; i += 2) {
+            normalPairs.push([rotatedPeople[i], rotatedPeople[i + 1]]);
+        }
+        
+        // Find the best pair to add the odd person to
+        let bestPairIndex = normalPairs.length - 1; // Default to last pair
+        
+        for (let i = 0; i < normalPairs.length; i++) {
+            // Check if neither person in this pair was paired with the odd person last week
+            if (!lastWeekPartners.includes(normalPairs[i][0]) && 
+                !lastWeekPartners.includes(normalPairs[i][1])) {
+                bestPairIndex = i;
+                break; // Found a good pair, use it
+            }
+        }
+        
+        // Add the odd person to the best pair
+        normalPairs[bestPairIndex].push(oddPersonOut);
+        pairs = [...pairs, ...normalPairs];
     } else {
-      // Last person - add to the last created pair to make a group of 3
-      if (pairs.length > 0) {
-        pairs[pairs.length - 1].push(rotatedPeople[i]);
-      } else if (fixedPairs.length > 0) {
-        // If we only have fixed pairs, add to the last fixed pair
-        pairs[pairs.length - 1].push(rotatedPeople[i]);
-      } else {
-        // Edge case: only one person total and no fixed pairs
-        // This shouldn't happen with the checks above, but just in case
-        console.warn("Warning: Could not avoid having a single-person group");
-        pairs.push([rotatedPeople[i]]);
-      }
+        // Even number of people - just create pairs normally
+        for (let i = 0; i < rotatedPeople.length; i += 2) {
+            pairs.push([rotatedPeople[i], rotatedPeople[i + 1]]);
+        }
+    }
+
+    return pairs;
+}
+
+// Expose the function to the window object for testing
+if (typeof window !== 'undefined') {
+    window.testGeneratePairs = (people, initialPairs = []) => {
+      return generatePairs(people, initialPairs);
     }
   }
-  
-  return pairs;
-}
 
 const PrayerPartners = () => {
     // Extract people and fixed pairs from the imported JSON
     const people = peopleList.map(person => person.name);
-    const fixedPairs = fixedPairsList.map(item => item.pair);
+    const initialPairs = initialPairsList.map(item => item.pair);
     
     // Generate the current pairs
-    const currentPairs = generatePairs(people, fixedPairs);
+    const currentPairs = generatePairs(people, initialPairs);
 
     return (
         <Layout>
