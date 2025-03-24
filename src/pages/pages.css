@@ -19,22 +19,83 @@
     text-align: center;
 }
 
+/* Prayer Partners Page Styling */
+.prayer-partners-page {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/* Center the rotation countdown */
+.rotation-countdown-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
 .rotation-countdown {
     background-color: #f5f5f5;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-  }
-  
-  .partners-list {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.rotation-countdown h3 {
+  font-size: 1.5rem;
+}
+
+/* Center the "Current Prayer Partners" heading */
+.partners-heading {
+    text-align: center;
+    margin: 30px 0;
+    font-size: 2rem;
+}
+
+/* Grid layout for the partner pairs */
+.partners-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-  }
-  
-  .partner-pair {
+    margin-top: 20px;
+}
+
+.partner-pair {
     background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
+    padding: 20px;
+    border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
+}
+
+.partner-pair h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.partner-pair ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.partner-pair li {
+    margin-bottom: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .partners-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .partners-heading {
+        font-size: 1.5rem;
+    }
+}

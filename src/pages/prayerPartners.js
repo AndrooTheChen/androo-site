@@ -93,23 +93,23 @@ const generatePairs = (people, initialPairs = []) => {
     // If we have fewer than 2 people available, we need to break up a fixed pair
     // to avoid having a single person alone
     if (availablePeople.length === 1 && initialPairs.length > 0) {
-        // Take a person from the last fixed pair to pair with our single person
-        const lastFixedPair = pairs.pop();
-        const personFromFixed = lastFixedPair[0];
-        const remainingFixed = lastFixedPair.slice(1);
+        // Take a person from the last initial pair to pair with our single person
+        const lastInitialPair = initialPairs.pop();
+        const personFromInitial = lastInitialPair[0];
+        const remainingInitial = lastInitialPair.slice(1);
 
         // Create a new pair with our single person and one from the fixed pair
-        pairs.push([availablePeople[0], personFromFixed]);
+        pairs.push([availablePeople[0], personFromInitial]);
 
-        // If there are still people left in the fixed pair, add them back
-        if (remainingFixed.length > 0) {
-            pairs.push(remainingFixed);
+        // If there are still people left in the initial pair, add them back
+        if (remainingInitial.length > 0) {
+            initialPairs.push(remainingInitial);
         }
 
         return pairs;
     }
 
-    // If no one is available, just return fixed pairs
+    // If no one is available, just return initial pairs
     if (availablePeople.length === 0) {
         return pairs;
     }
@@ -200,7 +200,7 @@ if (typeof window !== 'undefined') {
   }
 
 const PrayerPartners = () => {
-    // Extract people and fixed pairs from the imported JSON
+    // Extract people and initial pairs from the imported JSON
     const people = peopleList.map(person => person.name);
     const initialPairs = initialPairsList.map(item => item.pair);
     
@@ -209,23 +209,24 @@ const PrayerPartners = () => {
 
     return (
         <Layout>
-            <div className="prayer-partners-page">
-                <h1>Prayer Partners</h1>
+            <div className="prayer-partners-page">                
+                <div className="rotation-countdown-container">
+                    <RotationCountdown />
+                </div>
                 
-                <RotationCountdown />
+                <h2 className="partners-heading">Current Prayer Partners</h2>
                 
-                <div className="partners-list">
-                <h2>Current Prayer Partners</h2>
-                {currentPairs.map((pair, index) => (
-                    <div key={index} className="partner-pair">
-                    <h3>Group {index + 1}</h3>
-                    <ul>
-                        {pair.map((person, personIndex) => (
-                        <li key={personIndex}>{person}</li>
-                        ))}
-                    </ul>
-                    </div>
-                ))}
+                <div className="partners-grid">
+                    {currentPairs.map((pair, index) => (
+                        <div key={index} className="partner-pair">
+                            <h3>Group {index + 1}</h3>
+                            <ul>
+                                {pair.map((person, personIndex) => (
+                                    <li key={personIndex}>{person}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
                 </div>
             </div>
         </Layout>
