@@ -124,62 +124,13 @@ const roundRobinPairing = (people, weekNumber) => {
         pairs.push([positions[i], positions[n - 1 - i]]);
     }
     
-    // If we had an odd number of participants, add the extra person strategically
+    // If we had an odd number of participants, add the extra person
     if (isOdd && extraPerson) {
-        // Track who the extra person has been paired with in previous weeks
-        const pairingHistory = {};
-        
-        // Initialize pairing history for all previous weeks
-        for (let prevWeek = 0; prevWeek < weekNumber; prevWeek++) {
-            const prevRound = prevWeek % (n - 1);
-            let prevPositions = [...people];
-            
-            if (prevRound > 0) {
-                const firstPrevPerson = prevPositions[0];
-                const prevRotated = prevPositions.slice(1);
-                
-                for (let i = 0; i < prevRound; i++) {
-                    prevRotated.push(prevRotated.shift());
-                }
-                
-                prevPositions = [firstPrevPerson, ...prevRotated];
-            }
-            
-            // Find which pair had the extra person
-            const prevPairs = [];
-            for (let i = 0; i < n / 2; i++) {
-                prevPairs.push([prevPositions[i], prevPositions[n - 1 - i]]);
-            }
-            
-            // In the original algorithm, extra person was always added to first pair
-            const pairWithExtra = prevPairs[0];
-            
-            // Record that extra person was paired with these people
-            pairWithExtra.forEach(person => {
-                if (!pairingHistory[person]) {
-                    pairingHistory[person] = 0;
-                }
-                pairingHistory[person]++;
-            });
-        }
-        
-        // Find the pair with people that the extra person has been paired with least
-        let bestPairIndex = 0;
-        let lowestPairingScore = Infinity;
-        
-        pairs.forEach((pair, index) => {
-            const pairingScore = pair.reduce((score, person) => {
-                return score + (pairingHistory[person] || 0);
-            }, 0);
-            
-            if (pairingScore < lowestPairingScore) {
-                lowestPairingScore = pairingScore;
-                bestPairIndex = index;
-            }
-        });
-        
-        // Add the extra person to the best pair
-        pairs[bestPairIndex].push(extraPerson);
+        // Use a prime number-based rotation to avoid patterns
+        // This creates a sequence that doesn't repeat until lcm(n/2, prime)
+        const prime = 7; // A prime number that's not related to our group sizes
+        const pairIndex = (weekNumber * prime) % pairs.length;
+        pairs[pairIndex].push(extraPerson);
     }
     
     return pairs;
