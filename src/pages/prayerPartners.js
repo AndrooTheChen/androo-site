@@ -63,13 +63,11 @@ const RotationCountdown = () => {
   }
 
 // Generate pairs using a round-robin tournament scheduling algorithm
-const generatePairs = (people, week) => {
+const generatePairs = (people) => {
     // Get current week number since epoch to determine rotation
     const now = new Date();
-    // console.log("now", now);
     // For testing:
     // const now = new Date(2025, 2, 27);
-    console.log("now", now);
     // const now = new Date(2025, 3, 3);
     // const now = new Date(2025, 3, 10);
     // const now = new Date(2025, 3, 17);
@@ -78,26 +76,12 @@ const generatePairs = (people, week) => {
     const startDate = new Date(2025, 2, 19);
     startDate.setHours(19, 0, 0, 0);
     const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-    let weekNumber = Math.floor((now - startDate) / msPerWeek);
-    console.log("weekNumber", weekNumber);
+    const weekNumber = Math.floor((now - startDate) / msPerWeek);
 
     // If we have 0 or 1 people, just return an empty array or single-person array
     if (people.length <= 1) {
         return people.length === 0 ? [] : [[people[0]]];
     }
-
-    // print all configurations for the 22 weeks
-    for (let i = 0; i < 22; i++) {
-        console.log("weekNumber", i);
-        console.table(roundRobinPairing([...people], i));
-
-        // save the pairs to a file
-
-        // const fs = require('fs');
-        // fs.writeFileSync(`pairs_week_${i}.json`, JSON.stringify(roundRobinPairing([...people], i), null, 2));
-    }
-
-    weekNumber = week ? week : weekNumber;
     
     // Use round-robin tournament scheduling algorithm
     return roundRobinPairing([...people], weekNumber);
@@ -140,9 +124,62 @@ const roundRobinPairing = (people, weekNumber) => {
         pairs.push([positions[i], positions[n - 1 - i]]);
     }
     
-    // If we had an odd number of participants, add the extra person to the first pair
+    // If we had an odd number of participants, add the extra person strategically
     if (isOdd && extraPerson) {
-        pairs[0].push(extraPerson);
+        // Track who the extra person has been paired with in previous weeks
+        const pairingHistory = {};
+        
+        // Initialize pairing history for all previous weeks
+        for (let prevWeek = 0; prevWeek < weekNumber; prevWeek++) {
+            const prevRound = prevWeek % (n - 1);
+            let prevPositions = [...people];
+            
+            if (prevRound > 0) {
+                const firstPrevPerson = prevPositions[0];
+                const prevRotated = prevPositions.slice(1);
+                
+                for (let i = 0; i < prevRound; i++) {
+                    prevRotated.push(prevRotated.shift());
+                }
+                
+                prevPositions = [firstPrevPerson, ...prevRotated];
+            }
+            
+            // Find which pair had the extra person
+            const prevPairs = [];
+            for (let i = 0; i < n / 2; i++) {
+                prevPairs.push([prevPositions[i], prevPositions[n - 1 - i]]);
+            }
+            
+            // In the original algorithm, extra person was always added to first pair
+            const pairWithExtra = prevPairs[0];
+            
+            // Record that extra person was paired with these people
+            pairWithExtra.forEach(person => {
+                if (!pairingHistory[person]) {
+                    pairingHistory[person] = 0;
+                }
+                pairingHistory[person]++;
+            });
+        }
+        
+        // Find the pair with people that the extra person has been paired with least
+        let bestPairIndex = 0;
+        let lowestPairingScore = Infinity;
+        
+        pairs.forEach((pair, index) => {
+            const pairingScore = pair.reduce((score, person) => {
+                return score + (pairingHistory[person] || 0);
+            }, 0);
+            
+            if (pairingScore < lowestPairingScore) {
+                lowestPairingScore = pairingScore;
+                bestPairIndex = index;
+            }
+        });
+        
+        // Add the extra person to the best pair
+        pairs[bestPairIndex].push(extraPerson);
     }
     
     return pairs;
