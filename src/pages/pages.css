@@ -99,7 +99,6 @@
         font-size: 1.5rem;
     }
 }
-
 /* Add these styles to your pages.css file */
 
 .schedule-toggle {
@@ -178,4 +177,10 @@
   margin-top: -10px;
   margin-bottom: 10px;
   font-style: italic;
+}
+
+.copy-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
