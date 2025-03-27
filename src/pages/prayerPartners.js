@@ -62,135 +62,79 @@ const RotationCountdown = () => {
     );
   }
 
-// Generate pairs with rotation by one person each week
-const generatePairs = (people, initialPairs = []) => {
+// Generate pairs using a round-robin tournament scheduling algorithm
+const generatePairs = (people) => {
     // Get current week number since epoch to determine rotation
     const now = new Date();
-    // Note (androo): for testing
+    // For testing:
     // const now = new Date(2025, 2, 27);
     // const now = new Date(2025, 3, 3);
+    // const now = new Date(2025, 3, 10);
+    // const now = new Date(2025, 3, 17);
 
-    // Note (androo): we started doing this 3/19/2025)
+    // Note: we started doing this 3/19/2025 at 7:00 PM Pacific Time
     const startDate = new Date(2025, 2, 19);
+    startDate.setHours(19, 0, 0, 0);
     const msPerWeek = 7 * 24 * 60 * 60 * 1000;
     const weekNumber = Math.floor((now - startDate) / msPerWeek);
 
-    // Create a copy of the people array to work with
-    let availablePeople = [...people];
-
-    // Start with fixed pairs
-    let pairs = [];
-    if (weekNumber === 0) {
-        pairs = [...initialPairs];
-        // Remove people who are in fixed pairs
-        initialPairs.forEach(pair => {
-            availablePeople = availablePeople.filter(person => 
-                !pair.includes(person)
-            );
-        });
+    // If we have 0 or 1 people, just return an empty array or single-person array
+    if (people.length <= 1) {
+        return people.length === 0 ? [] : [[people[0]]];
     }
-
-    // If we have fewer than 2 people available, we need to break up a fixed pair
-    // to avoid having a single person alone
-    if (availablePeople.length === 1 && initialPairs.length > 0) {
-        // Take a person from the last initial pair to pair with our single person
-        const lastInitialPair = initialPairs.pop();
-        const personFromInitial = lastInitialPair[0];
-        const remainingInitial = lastInitialPair.slice(1);
-
-        // Create a new pair with our single person and one from the fixed pair
-        pairs.push([availablePeople[0], personFromInitial]);
-
-        // If there are still people left in the initial pair, add them back
-        if (remainingInitial.length > 0) {
-            initialPairs.push(remainingInitial);
-        }
-
-        return pairs;
-    }
-
-    // If no one is available, just return initial pairs
-    if (availablePeople.length === 0) {
-        return pairs;
-    }
-
-    // Implement rotation by shifting the array based on week number
-    const rotationOffset = weekNumber % availablePeople.length;
-
-    // Create a rotated array
-    const rotatedPeople = [
-        ...availablePeople.slice(rotationOffset),
-        ...availablePeople.slice(0, rotationOffset)
-    ];
-
-    // Check if we have an odd number of people
-    const hasOddPerson = rotatedPeople.length % 2 === 1;
     
-    // If we have an odd number, identify who will be the odd person out
-    let oddPersonOut = null;
-    if (hasOddPerson) {
-        oddPersonOut = rotatedPeople[rotatedPeople.length - 1];
-        
-        // Find who this person was paired with last week (if not week 0)
-        let lastWeekPartners = [];
-        if (weekNumber > 0) {
-            // Calculate last week's rotation
-            const lastWeekOffset = (weekNumber - 1) % availablePeople.length;
-            const lastWeekRotated = [
-                ...availablePeople.slice(lastWeekOffset),
-                ...availablePeople.slice(0, lastWeekOffset)
-            ];
-            
-            // Find the odd person's position in last week's rotation
-            const lastWeekPosition = lastWeekRotated.indexOf(oddPersonOut);
-            
-            // If they were in a pair
-            if (lastWeekPosition % 2 === 0 && lastWeekPosition + 1 < lastWeekRotated.length) {
-                lastWeekPartners.push(lastWeekRotated[lastWeekPosition + 1]);
-            } else if (lastWeekPosition % 2 === 1) {
-                lastWeekPartners.push(lastWeekRotated[lastWeekPosition - 1]);
-            }
-            
-            // If they were in a group of 3 last week
-            if (lastWeekRotated.length % 2 === 1 && 
-                lastWeekPosition === lastWeekRotated.length - 1) {
-                // They were the odd person out last week too
-                // They were added to the last pair
-                lastWeekPartners.push(lastWeekRotated[lastWeekRotated.length - 2]);
-                lastWeekPartners.push(lastWeekRotated[lastWeekRotated.length - 3]);
-            }
-        }
-        
-        // Create pairs, avoiding putting the odd person with their previous partners
-        const normalPairs = [];
-        for (let i = 0; i < rotatedPeople.length - 1; i += 2) {
-            normalPairs.push([rotatedPeople[i], rotatedPeople[i + 1]]);
-        }
-        
-        // Find the best pair to add the odd person to
-        let bestPairIndex = normalPairs.length - 1; // Default to last pair
-        
-        for (let i = 0; i < normalPairs.length; i++) {
-            // Check if neither person in this pair was paired with the odd person last week
-            if (!lastWeekPartners.includes(normalPairs[i][0]) && 
-                !lastWeekPartners.includes(normalPairs[i][1])) {
-                bestPairIndex = i;
-                break; // Found a good pair, use it
-            }
-        }
-        
-        // Add the odd person to the best pair
-        normalPairs[bestPairIndex].push(oddPersonOut);
-        pairs = [...pairs, ...normalPairs];
-    } else {
-        // Even number of people - just create pairs normally
-        for (let i = 0; i < rotatedPeople.length; i += 2) {
-            pairs.push([rotatedPeople[i], rotatedPeople[i + 1]]);
-        }
-    }
+    // Use round-robin tournament scheduling algorithm
+    return roundRobinPairing([...people], weekNumber);
+};
 
+// Implement round-robin tournament scheduling
+const roundRobinPairing = (people, weekNumber) => {
+    // For odd number of participants, we'll handle the last person specially
+    const isOdd = people.length % 2 === 1;
+    let extraPerson = null;
+    
+    if (isOdd) {
+        // Remove the last person temporarily
+        extraPerson = people.pop();
+    }
+    
+    const n = people.length;
+    // For n participants, we have (n-1) rounds
+    const round = weekNumber % (n - 1);
+    
+    // Create a copy of the people array
+    let positions = [...people];
+    
+    // Rotate the array based on the round number
+    if (round > 0) {
+        const firstPerson = positions[0];
+        const rotated = positions.slice(1);
+        
+        // Rotate the remaining people
+        for (let i = 0; i < round; i++) {
+            rotated.push(rotated.shift());
+        }
+        
+        positions = [firstPerson, ...rotated];
+    }
+    
+    // Create pairs
+    const pairs = [];
+    for (let i = 0; i < n / 2; i++) {
+        pairs.push([positions[i], positions[n - 1 - i]]);
+    }
+    
+    // If we had an odd number of participants, add the extra person
+    if (isOdd && extraPerson) {
+        // Use a prime number-based rotation to avoid patterns
+        // This creates a sequence that doesn't repeat until lcm(n/2, prime)
+        const prime = 7; // A prime number that's not related to our group sizes
+        const pairIndex = (weekNumber * prime) % pairs.length;
+        pairs[pairIndex].push(extraPerson);
+    }
+    
     return pairs;
-}
+};
 
 // Expose the function to the window object for testing
 if (typeof window !== 'undefined') {
@@ -202,10 +146,38 @@ if (typeof window !== 'undefined') {
 const PrayerPartners = () => {
     // Extract people and initial pairs from the imported JSON
     const people = peopleList.map(person => person.name);
-    const initialPairs = initialPairsList.map(item => item.pair);
     
     // Generate the current pairs
-    const currentPairs = generatePairs(people, initialPairs);
+    const currentPairs = generatePairs(people);
+    
+    // State for toggling the schedule visibility
+    const [showSchedule, setShowSchedule] = useState(false);
+    
+    // Calculate date ranges for each week
+    const getWeekDateRange = (weekNumber) => {
+        const startDate = new Date(2025, 2, 19); // March 19, 2025
+        startDate.setHours(19, 0, 0, 0); // 7 PM
+        
+        const weekStart = new Date(startDate);
+        weekStart.setDate(weekStart.getDate() + (weekNumber * 7));
+        
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        
+        // Format dates as MM/DD/YYYY
+        const formatDate = (date) => {
+            return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+        };
+        
+        return `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    };
+    
+    // Generate all 22 weeks of schedules with date ranges
+    const allWeeksSchedule = Array.from({ length: 22 }, (_, i) => ({
+        week: i,
+        dateRange: getWeekDateRange(i),
+        pairs: roundRobinPairing([...people], i)
+    }));
 
     // Format the pairs into a human-readable string
     const readablePairs = currentPairs
@@ -244,6 +216,41 @@ const PrayerPartners = () => {
                             </ul>
                         </div>
                     ))}
+                </div>
+                
+                <div className="schedule-toggle">
+                    <button 
+                        onClick={() => setShowSchedule(!showSchedule)}
+                        className="toggle-button"
+                    >
+                        {showSchedule ? "Hide Full Schedule" : "Show Full Schedule"}
+                    </button>
+                    
+                    {showSchedule && (
+                        <div className="full-schedule">
+                            <h2>Complete 22-Week Schedule</h2>
+                            <div className="weeks-container">
+                                {allWeeksSchedule.map((weekData) => (
+                                    <div key={weekData.week} className="week-schedule">
+                                        <h3>Week {weekData.week + 1}</h3>
+                                        <p className="date-range">{weekData.dateRange}</p>
+                                        <div className="week-pairs">
+                                            {weekData.pairs.map((pair, pairIndex) => (
+                                                <div key={pairIndex} className="schedule-pair">
+                                                    <h4>Group {pairIndex + 1}</h4>
+                                                    <ul>
+                                                        {pair.map((person, personIndex) => (
+                                                            <li key={personIndex}>{person}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </Layout>
