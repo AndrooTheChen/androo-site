@@ -207,6 +207,18 @@ const PrayerPartners = () => {
     // Generate the current pairs
     const currentPairs = generatePairs(people, initialPairs);
 
+    // Format the pairs into a human-readable string
+    const readablePairs = currentPairs
+        .map((pair, index) => `Group ${index + 1}: ${pair.join(", ")}`)
+        .join("\n");
+
+    // Function to copy the formatted pairs to the clipboard
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(readablePairs)
+            .then(() => alert("Copied list of partners!!"))
+            .catch(err => console.error("Failed to copy text: ", err));
+    };
+
     return (
         <Layout>
             <div className="prayer-partners-page">                
@@ -215,7 +227,12 @@ const PrayerPartners = () => {
                 </div>
                 
                 <h2 className="partners-heading">Current Prayer Partners</h2>
-                
+
+                <div className="copy-button-container">
+                    <button onClick={copyToClipboard} className="copy-button">
+                        Copy Partners
+                    </button>
+                </div>
                 <div className="partners-grid">
                     {currentPairs.map((pair, index) => (
                         <div key={index} className="partner-pair">
