@@ -201,8 +201,8 @@ const PrayerPartners = () => {
                 <h2 className="partners-heading">Current Prayer Partners</h2>
 
                 <div className="copy-button-container">
-                    <button onClick={copyToClipboard} className="copy-button">
-                        Copy Partners
+                    <button onClick={copyToClipboard} className="toggle-button">
+                        Copy Partners to Clipboard
                     </button>
                 </div>
                 <div className="partners-grid">
