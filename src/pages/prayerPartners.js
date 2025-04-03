@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
-import Layout from "../components/layout"
+import Header from "../components/header"
+import Footer from "../components/footer"
 
 
 import "./pages.css"
@@ -192,7 +193,8 @@ const PrayerPartners = () => {
     };
 
     return (
-        <Layout>
+        <div>
+            <Header />
             <div className="prayer-partners-page">                
                 <div className="rotation-countdown-container">
                     <RotationCountdown />
@@ -253,7 +255,8 @@ const PrayerPartners = () => {
                     )}
                 </div>
             </div>
-        </Layout>
+            <Footer />
+        </div>
     )
 }
 
