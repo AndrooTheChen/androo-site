@@ -7,7 +7,6 @@ import "./pages.css"
 
 // Import JSON data directly
 import peopleList from "../data/dudes.json"
-import initialPairsList from "../data/initialPairs.json"
 
 
 // Helper function to calculate time until next rotation
