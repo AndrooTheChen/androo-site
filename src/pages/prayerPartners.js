@@ -192,16 +192,9 @@ const PrayerPartners = () => {
 
     // Function to copy the formatted pairs to the clipboard
     const copyToClipboard = () => {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(readablePairs)
-                .then(() => alert("Copied list of partners!!"))
-                .catch(err => {
-                    console.error("Failed to copy: ", err);
-                    alert("Unable to copy to clipboard");
-                });
-        } else {
-            alert("Clipboard access not available on your device");
-        }
+        navigator.clipboard.writeText(readablePairs)
+            .then(() => alert("Copied list of partners!!"))
+            .catch(err => console.error("Failed to copy text: ", err));
     };
 
     return (
