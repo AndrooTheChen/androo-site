@@ -26,6 +26,13 @@
     margin: 0 auto;
 }
 
+/* Center the main title with more padding */
+.page-title {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
 
 /* Center the rotation countdown */
 .rotation-countdown-container {
@@ -48,10 +55,58 @@
 }
 
 /* Center the "Current Prayer Partners" heading */
+.partners-heading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+  position: relative;
+  flex-wrap: wrap;
+  gap: 0.1rem;
+}
+
 .partners-heading {
-    text-align: center;
-    margin: 30px 0;
-    font-size: 2rem;
+  text-align: center;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.copy-icon-wrapper {
+  cursor: pointer;
+  position: relative;
+  padding: 8px;
+}
+
+.copy-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.copy-icon:hover, .copy-icon:active {
+  transform: scale(1.1);
+}
+
+/* Tooltip styling - works on hover and touch */
+.copy-icon-wrapper {
+  position: relative;
+}
+
+.copy-icon-wrapper:hover::after,
+.copy-icon-wrapper:active::after {
+  content: "Copy partners to clipboard";
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 100;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -30px;
 }
 
 /* Grid layout for the partner pairs */
@@ -98,7 +153,36 @@
     .partners-heading {
         font-size: 1.5rem;
     }
+    
+    .copy-icon {
+        font-size: 1.3rem;
+    }
+    
+    .copy-icon-wrapper:hover::after,
+    .copy-icon-wrapper:active::after {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        bottom: -25px;
+    }
 }
+
+/* For very small screens */
+@media (max-width: 360px) {
+    .partners-heading-container {
+        flex-direction: column;
+    }
+    
+    .copy-icon-wrapper {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+    
+    .copy-icon-wrapper:hover::after,
+    .copy-icon-wrapper:active::after {
+        bottom: -25px;
+    }
+}
+
 /* Add these styles to your pages.css file */
 
 .schedule-toggle {

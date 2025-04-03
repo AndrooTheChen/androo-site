@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react"
 import Header from "../components/header"
 import Footer from "../components/footer"
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+
 
 import "./pages.css"
 
 // Import JSON data directly
 import peopleList from "../data/dudes.json"
-
 
 // Helper function to calculate time until next rotation
 const getTimeUntilNextRotation = () => {
@@ -198,14 +200,26 @@ const PrayerPartners = () => {
                 <div className="rotation-countdown-container">
                     <RotationCountdown />
                 </div>
-                
-                <h2 className="partners-heading">Current Prayer Partners</h2>
 
-                <div className="copy-button-container">
+                <div className="partners-heading-container">
+                    <h2 className="partners-heading">Current Prayer Partners</h2>
+                    <div className="copy-icon-wrapper" title="Copy partners to clipboard">
+                        <FontAwesomeIcon 
+                        icon={faClipboard} 
+                        className="copy-icon" 
+                        onClick={copyToClipboard}
+                        aria-label="Copy partners to clipboard"
+                        />
+                    </div>
+                </div>
+                
+                {/* <h2 className="partners-heading">Current Prayer Partners</h2> */}
+
+                {/* <div className="copy-button-container">
                     <button onClick={copyToClipboard} className="toggle-button">
                         Copy Partners to Clipboard
                     </button>
-                </div>
+                </div> */}
                 <div className="partners-grid">
                     {currentPairs.map((pair, index) => (
                         <div key={index} className="partner-pair">
