@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Header from "../components/header"
 import Footer from "../components/footer"
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboard } from '@fortawesome/free-solid-svg-icons';
-
+import clipboard from "../clipboard.svg"
 
 import "./pages.css"
 
@@ -208,12 +205,7 @@ const PrayerPartners = () => {
                 <div className="partners-heading-container">
                     <h2 className="partners-heading">Current Prayer Partners</h2>
                     <div className="copy-icon-wrapper">
-                        <FontAwesomeIcon 
-                        icon={faClipboard} 
-                        className="copy-icon" 
-                        onClick={copyToClipboard}
-                        aria-label="Copy partners to clipboard"
-                        />
+                        <button className="copy-icon" onClick={copyToClipboard}><img src={clipboard} alt="Copy partners to clipboard" /></button>
                     </div>
                 </div>
                 
