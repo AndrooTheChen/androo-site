@@ -192,9 +192,16 @@ const PrayerPartners = () => {
 
     // Function to copy the formatted pairs to the clipboard
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(readablePairs)
-            .then(() => alert("Copied list of partners!!"))
-            .catch(err => console.error("Failed to copy text: ", err));
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(readablePairs)
+                .then(() => alert("Copied list of partners!!"))
+                .catch(err => {
+                    console.error("Failed to copy: ", err);
+                    alert("Unable to copy to clipboard");
+                });
+        } else {
+            alert("Clipboard access not available on your device");
+        }
     };
 
     return (
@@ -207,7 +214,7 @@ const PrayerPartners = () => {
 
                 <div className="partners-heading-container">
                     <h2 className="partners-heading">Current Prayer Partners</h2>
-                    <div className="copy-icon-wrapper" title="Copy partners to clipboard">
+                    <div className="copy-icon-wrapper">
                         <FontAwesomeIcon 
                         icon={faClipboard} 
                         className="copy-icon" 

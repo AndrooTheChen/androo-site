@@ -71,44 +71,6 @@
   margin: 0;
 }
 
-.copy-icon-wrapper {
-  cursor: pointer;
-  position: relative;
-  padding: 8px;
-}
-
-.copy-icon {
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-  display: inline-block;
-}
-
-.copy-icon:hover, .copy-icon:active {
-  transform: scale(1.1);
-}
-
-/* Tooltip styling - works on hover and touch */
-.copy-icon-wrapper {
-  position: relative;
-}
-
-.copy-icon-wrapper:hover::after,
-.copy-icon-wrapper:active::after {
-  content: "Copy partners to clipboard";
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  z-index: 100;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -30px;
-}
-
 /* Grid layout for the partner pairs */
 .partners-grid {
     display: grid;
@@ -291,4 +253,47 @@
   color: #4a90e2;
   font-weight: normal;
   font-size: 0.9em;
+}
+
+/* Desktop-only hover tooltip */
+@media (hover: hover) and (pointer: fine) {
+  .copy-icon-wrapper {
+    position: relative;
+  }
+  
+  .copy-icon-wrapper::after {
+    content: "Copy partners to clipboard";
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  
+  .copy-icon-wrapper:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Make the copy icon more tappable on mobile */
+.copy-icon-wrapper {
+  cursor: pointer;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-icon {
+  font-size: 1.2rem;
 }
