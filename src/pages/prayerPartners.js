@@ -155,11 +155,14 @@ const PrayerPartners = () => {
     // State for toggling the schedule visibility
     const [showSchedule, setShowSchedule] = useState(false);
     
+    // Calculate current week number
+    const now = new Date();
+    const startDate = new Date(2025, 2, 19); // March 19, 2025
+    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+    const currentWeekNumber = Math.floor((now - startDate) / msPerWeek) + 1; // +1 for 1-based week number
+    
     // Calculate date ranges for each week
     const getWeekDateRange = (weekNumber) => {
-        const startDate = new Date(2025, 2, 19); // March 19, 2025
-        startDate.setHours(19, 0, 0, 0); // 7 PM
-        
         const weekStart = new Date(startDate);
         weekStart.setDate(weekStart.getDate() + (weekNumber * 7));
         
@@ -178,7 +181,8 @@ const PrayerPartners = () => {
     const allWeeksSchedule = Array.from({ length: 22 }, (_, i) => ({
         week: i,
         dateRange: getWeekDateRange(i),
-        pairs: roundRobinPairing([...people], i)
+        pairs: roundRobinPairing([...people], i),
+        isCurrent: i === currentWeekNumber - 1 // Check if this is the current week
     }));
 
     // Format the pairs into a human-readable string
@@ -213,13 +217,10 @@ const PrayerPartners = () => {
                     </div>
                 </div>
                 
-                {/* <h2 className="partners-heading">Current Prayer Partners</h2> */}
-
-                {/* <div className="copy-button-container">
-                    <button onClick={copyToClipboard} className="toggle-button">
-                        Copy Partners to Clipboard
-                    </button>
-                </div> */}
+                <div className="week-indicator">
+                    <p><u>Week {currentWeekNumber}</u></p>
+                </div>
+                
                 <div className="partners-grid">
                     {currentPairs.map((pair, index) => (
                         <div key={index} className="partner-pair">
@@ -246,8 +247,11 @@ const PrayerPartners = () => {
                             <h2>Complete 22-Week Schedule</h2>
                             <div className="weeks-container">
                                 {allWeeksSchedule.map((weekData) => (
-                                    <div key={weekData.week} className="week-schedule">
-                                        <h3>Week {weekData.week + 1}</h3>
+                                    <div key={weekData.week} className={`week-schedule ${weekData.isCurrent ? 'current-week' : ''}`}>
+                                        <h3>
+                                            Week {weekData.week + 1}
+                                            {weekData.isCurrent && <span className="current-indicator"> (current)</span>}
+                                        </h3>
                                         <p className="date-range">{weekData.dateRange}</p>
                                         <div className="week-pairs">
                                             {weekData.pairs.map((pair, pairIndex) => (

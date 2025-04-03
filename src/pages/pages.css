@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 30px 0;
+  margin: 10px 0;
   position: relative;
   flex-wrap: wrap;
   gap: 0.1rem;
@@ -267,4 +267,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Week indicator styling */
+.week-indicator {
+  text-align: center;
+}
+
+.week-indicator p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #555;
+  margin: 0;
+}
+
+/* Current week indicator in schedule */
+.current-week {
+  border: 2px solid #4a90e2;
+  background-color: rgba(74, 144, 226, 0.05);
+}
+
+.current-indicator {
+  color: #4a90e2;
+  font-weight: normal;
+  font-size: 0.9em;
 }
